@@ -1,36 +1,97 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ECE Stipend Application
 
-## Getting Started
+## Overview
 
-First, run the development server:
+A small stipend/grant application flow: form at `/apply`, API at `POST /api/applications`, in‑memory persistence, triage rules, and a decoupled handoff record for downstream processing.
+
+## Key implementations
+
+- End‑to‑end submit flow from `/apply` to `/api/applications`
+- Server‑side API key proxy to keep secrets off the client
+- In‑memory persistence with HMR‑safe store behavior
+- Triage rules with clear `reviewTier` and `riskFlags`
+- Strict handoff contract built via a single mapping function
+- Tests covering API auth, triage logic, and store persistence
+
+## What’s included
+
+- **UI**: Next.js (App Router) + TypeScript + Bootstrap. Page at `/apply` with all required applicant and program fields.
+- **API**: `POST /api/applications` — validates input, persists application in memory, runs triage, creates handoff record, returns `applicationId`, `reviewTier`, `riskFlags`. Requires header `X-API-Key`; returns 401 if missing or wrong.
+- **Submit proxy**: `POST /api/submit` — server-only route that forwards to `/api/applications` and injects the API key (so the browser never has it).
+- **Persistence**: In-memory only (no DB). Full applications and handoff records in `lib/store.ts`.
+- **Triage**: `lib/triage.ts` sets `reviewTier` and `riskFlags`: amount > $1000, applicant under 18, invalid/unusual SSN pattern.
+- **Handoff**: Separate in-memory record per submission (no PII): `applicationId`, `submittedAt`, `reviewTier`, `riskFlags`, `programName`, `amountRequested`, `applicantRef`.
+
+## Setup
+
+1. Install
+
+   ```bash
+   npm install
+   ```
+
+2. Create `.env.local`
+
+   ```bash
+   API_KEY=your-secret-key
+   ```
+
+3. Run
+   ```bash
+   npm run dev
+   ```
+
+## Usage
+
+- Open [http://localhost:3000/apply](http://localhost:3000/apply)
+
+## Testing
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm test
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## PII handling
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Treated as sensitive**: full name, email, phone, date of birth, SSN, full address.
+- **Avoiding exposure**:
+  - API response returns only `applicationId`, `reviewTier`, `riskFlags` — no PII.
+  - API keys are server‑only and never echoed back in responses.
+  - Handoff records contain no PII; only `applicantRef` (opaque id) links to the full application.
+  - Handoff data uses strict, separate contracts, and a single mapping function builds the handoff record from the stored application.
+  - No logging of request body or stored application content; no PII in `riskFlags` text.
+  - Full application exists only in the in-memory store and is not exposed by any endpoint.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Business rules and handoff
 
-## Learn More
+- **Triage**: after validation and persistence, `triageApplication()` runs:
+  - Amount requested > $1000 → manual review, flag “Amount requested above threshold”.
+  - Applicant under 18 (from DOB) → manual review, flag “Applicant under 18”.
+  - Invalid/unusual SSN → manual review, flag “Invalid or unusual SSN pattern”.
+- **Handoff**: each submission creates a `HandoffRecord` with only non‑PII fields plus `applicantRef`.
 
-To learn more about Next.js, take a look at the following resources:
+## AI tool usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Used for**: refactoring suggestions, test ideas, README wording, and edge‑case checks.
+- **Validation**: ran tests, reviewed diffs, and manually exercised the submission flow to confirm behavior and avoid PII exposure.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech choices
 
-## Deploy on Vercel
+- **Frontend**: Next.js 16 (App Router), TypeScript, Bootstrap 5.
+- **Backend**: Next.js API routes (`/api/applications`) so the app runs with a single `npm run dev` (no separate server or CORS).
+- **Persistence**: In-memory only (no database).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Next steps
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. **Security & data handling**: strict rate limits, input size caps, and redacted audit logging
+2. **Idempotency & resilience**: idempotency key and request IDs for duplicate prevention and tracing
+3. **Data retention**: TTL cleanup for in‑memory records and clear retention policy
+4. **Auth/session**: authenticated applicant sessions and server‑side access control
+5. **Schema contracts**: shared runtime schemas (e.g., Zod) for request/response and handoff
+6. **Observability**: structured logs (no PII) and metrics for validation and review tiers
+7. **Validation quality**: stronger DOB/phone/state validation and normalization
+8. **API hardening**: versioned endpoints and consistent error envelopes
+
+---
+
+_ECE stipend application._
