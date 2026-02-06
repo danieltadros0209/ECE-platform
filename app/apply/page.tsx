@@ -108,7 +108,7 @@ const ApplyPage = () => {
             </div>
             <div className="col-md-6">
               <FormField
-                id="lasttName"
+                id="lastName"
                 label="Last name"
                 required
                 error={err("lastName")}
@@ -157,6 +157,17 @@ const ApplyPage = () => {
                 required
                 error={err("addressLine1")}
               />
+            </div>
+            <div className="col-12">
+              <FormField
+                id="addressLine2"
+                label="Address Line 2"
+                required
+                error={err("addressLine2")}
+              />
+            </div>
+            <div className="col-md-4">
+              <FormField id="city" label="City" required error={err("city")} />
             </div>
             <div className="col-md-2">
               <SelectField

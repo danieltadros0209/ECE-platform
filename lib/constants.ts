@@ -17,3 +17,5 @@ export const US_STATE_CODES = [
   "WY",
   "DC",
 ] as const;
+
+export const US_STATE_CODE_SET = new Set(US_STATE_CODES);
