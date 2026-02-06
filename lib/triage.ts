@@ -3,7 +3,7 @@ import { hasUnusualSsn } from "./validation";
 
 const MANUAL_REVIEW_AMOUNT_THRESHOLD = 1000;
 
-function ageFromDob(dateOfBirth: string): number | null {
+const ageFromDob = (dateOfBirth: string): number | null => {
   const parsed = new Date(dateOfBirth);
   if (Number.isNaN(parsed.getTime())) return null;
 
@@ -19,22 +19,22 @@ function ageFromDob(dateOfBirth: string): number | null {
   }
 
   return age;
-}
+};
 
-function isUnder18(dateOfBirth: string): boolean {
+const isUnder18 = (dateOfBirth: string): boolean => {
   const age = ageFromDob(dateOfBirth);
   return age !== null && age < 18;
-}
+};
 
-function isAmountHigh(amountRequested: number): boolean {
+const isAmountHigh = (amountRequested: number): boolean => {
   return amountRequested > MANUAL_REVIEW_AMOUNT_THRESHOLD;
-}
+};
 
 /**
  * Triage rules for `reviewTier` and `riskFlags`.
  * Keep PII out of flag text.
  */
-export function triageApplication(input: ApplicationInput): TriageResult {
+export const triageApplication = (input: ApplicationInput): TriageResult => {
   const flags: string[] = [];
 
   if (isAmountHigh(input.amountRequested)) {
@@ -52,4 +52,4 @@ export function triageApplication(input: ApplicationInput): TriageResult {
   const reviewTier: ReviewTier =
     flags.length > 0 ? "manual_review" : "standard";
   return { reviewTier, riskFlags: flags };
-}
+};

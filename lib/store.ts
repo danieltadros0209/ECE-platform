@@ -7,7 +7,7 @@ type StoreState = {
 
 const STORE_KEY = "ECE_Store";
 
-function getStore(): StoreState {
+const getStore = (): StoreState => {
   const globalstore = globalThis as typeof globalThis & {
     [STORE_KEY]?: StoreState;
   };
@@ -18,20 +18,20 @@ function getStore(): StoreState {
     };
   }
   return globalstore[STORE_KEY]!;
-}
+};
 
-export function saveApplication(app: StoredApplication): void {
+export const saveApplication = (app: StoredApplication): void => {
   getStore().applications.set(app.applicationId, app);
-}
+};
 
-export function getApplication(id: string): StoredApplication | undefined {
+export const getApplication = (id: string): StoredApplication | undefined => {
   return getStore().applications.get(id);
-}
+};
 
-export function saveHandoff(record: HandoffRecord): void {
+export const saveHandoff = (record: HandoffRecord): void => {
   getStore().handoffs.set(record.applicationId, record);
-}
+};
 
-export function getHandoff(id: string): HandoffRecord | undefined {
+export const getHandoff = (id: string): HandoffRecord | undefined => {
   return getStore().handoffs.get(id);
-}
+};

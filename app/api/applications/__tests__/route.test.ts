@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { POST } from "../route";
 
-function buildRequest(body: object, apiKey: string | null): NextRequest {
+const buildRequest = (body: object, apiKey: string | null): NextRequest => {
   const headers = new Headers({ "Content-Type": "application/json" });
   if (apiKey !== null) headers.set("x-api-key", apiKey);
   return new NextRequest("http://localhost/api/applications", {
@@ -9,7 +9,7 @@ function buildRequest(body: object, apiKey: string | null): NextRequest {
     headers,
     body: JSON.stringify(body),
   });
-}
+};
 
 const validBody = {
   firstName: "Jane",

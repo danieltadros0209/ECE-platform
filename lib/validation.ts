@@ -12,12 +12,12 @@ const toStateCode = (value: string): StateCode | null => {
 };
 
 /** Keep only digits; dashes are fine in input. */
-function ssnDigits(ssn: string): string {
+const ssnDigits = (ssn: string): string => {
   return ssn.replace(/\D/g, "");
-}
+};
 
 /** Basic SSN checks: 9 digits; no all-zero parts; no 666; no 9xx. */
-export function isValidSsnPattern(ssn: string): boolean {
+export const isValidSsnPattern = (ssn: string): boolean => {
   const digits = ssnDigits(ssn);
   if (digits.length !== 9) return false;
   const area = digits.slice(0, 3);
@@ -27,14 +27,14 @@ export function isValidSsnPattern(ssn: string): boolean {
   if (area === "666") return false;
   if (area.startsWith("9")) return false; // disallowed area
   return true;
-}
+};
 
 /** Flag SSNs that look fake or invalid. */
-export function hasUnusualSsn(ssn: string): boolean {
+export const hasUnusualSsn = (ssn: string): boolean => {
   const digits = ssnDigits(ssn);
   if (digits.length !== 9) return true;
   return !isValidSsnPattern(ssn);
-}
+};
 
 export type ValidationFailure = {
   success: false;
@@ -46,7 +46,7 @@ export type ValidationResult =
   | { success: true; data: ApplicationInput }
   | ValidationFailure;
 
-export function validateApplication(body: unknown): ValidationResult {
+export const validateApplication = (body: unknown): ValidationResult => {
   const errors: string[] = [];
   const fieldErrors: Record<string, string> = {};
 
@@ -170,4 +170,4 @@ export function validateApplication(body: unknown): ValidationResult {
   };
 
   return { success: true, data };
-}
+};

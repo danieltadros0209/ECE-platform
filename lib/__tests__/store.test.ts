@@ -1,6 +1,6 @@
 import type { StoredApplication, HandoffRecord } from "../types";
 
-function sampleApplication(id: string): StoredApplication {
+const sampleApplication = (id: string): StoredApplication => {
   return {
     applicationId: id,
     submittedAt: new Date("2025-01-01T00:00:00.000Z").toISOString(),
@@ -21,9 +21,9 @@ function sampleApplication(id: string): StoredApplication {
     amountRequested: 500,
     agreement: true,
   };
-}
+};
 
-function sampleHandoff(id: string): HandoffRecord {
+const sampleHandoff = (id: string): HandoffRecord => {
   return {
     applicationId: id,
     submittedAt: new Date("2025-01-01T00:00:00.000Z").toISOString(),
@@ -33,7 +33,7 @@ function sampleHandoff(id: string): HandoffRecord {
     amountRequested: 500,
     applicantRef: `app-${id}`,
   };
-}
+};
 
 describe("HMR-safe in-memory store", () => {
   it("persists applications across module reloads", async () => {

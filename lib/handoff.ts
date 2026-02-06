@@ -1,6 +1,6 @@
 import type { StoredApplication, HandoffRecord, HandoffInput } from "./types";
 
-function buildHandoffInput(app: StoredApplication): HandoffInput {
+const buildHandoffInput = (app: StoredApplication): HandoffInput => {
   return {
     applicationId: app.applicationId,
     submittedAt: app.submittedAt,
@@ -9,12 +9,12 @@ function buildHandoffInput(app: StoredApplication): HandoffInput {
     programName: app.programName,
     amountRequested: app.amountRequested,
   };
-}
+};
 
-export function toHandoff(app: StoredApplication): HandoffRecord {
+export const toHandoff = (app: StoredApplication): HandoffRecord => {
   const input = buildHandoffInput(app);
   return {
     ...input,
     applicantRef: `app-${app.applicationId}`,
   };
-}
+};

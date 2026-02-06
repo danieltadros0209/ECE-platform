@@ -7,3 +7,7 @@
   content: " *";
   color: var(--bs-danger);
 }
+
+#devtools-indicator {
+  display: none !important;
+}
