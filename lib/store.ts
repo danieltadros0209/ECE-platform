@@ -23,13 +23,6 @@ const getStore = (): StoreState => {
 };
 
 export const saveApplication = (app: StoredApplication): void => {
-<<<<<<< HEAD
-  getStore().applications.set(app.applicationId, app);
-};
-
-export const getApplication = (id: string): StoredApplication | undefined => {
-  return getStore().applications.get(id);
-=======
   const encrypted = encryptJson(app);
   getStore().applications.set(app.applicationId, encrypted);
 };
@@ -38,7 +31,6 @@ export const getApplication = (id: string): StoredApplication | undefined => {
   const encrypted = getStore().applications.get(id);
   if (!encrypted) return undefined;
   return decryptJson<StoredApplication>(encrypted);
->>>>>>> dev
 };
 
 export const saveHandoff = (record: HandoffRecord): void => {
