@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import { US_STATE_CODES } from "@/lib/constants";
+import { validateDob, validateZipcode } from "@/lib/validation_frontend";
 import { FormField, SelectField, CheckboxField } from "@/components";
 
 const ApplyPage = () => {
@@ -17,8 +18,17 @@ const ApplyPage = () => {
     e.preventDefault();
     setMessage(null);
     setFieldErrors({});
+    const _errors = {};
     const form = e.currentTarget;
     const formData = new FormData(form);
+
+    console.log(formData.get("ssn"));
+    validateDob(formData.get("dateOfBirth"), _errors);
+    validateZipcode(formData.get("zipCode"), _errors);
+
+    if (Object.keys(_errors).length > 0) {
+      return setFieldErrors(_errors);
+    }
 
     const payload = {
       firstName: formData.get("firstName"),
@@ -141,7 +151,7 @@ const ApplyPage = () => {
                 error={err("dateOfBirth")}
               />
             </div>
-            <div className="col-md-12">
+            <div className="col-md-6">
               <FormField
                 id="ssn"
                 label="Social Security Number"
@@ -161,8 +171,7 @@ const ApplyPage = () => {
             <div className="col-12">
               <FormField
                 id="addressLine2"
-                label="Address Line 2"
-                required
+                label="Address Line 2 (Optional)"
                 error={err("addressLine2")}
               />
             </div>

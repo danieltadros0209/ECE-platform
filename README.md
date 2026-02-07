@@ -53,14 +53,16 @@ npm test
 
 ## PII handling
 
-- **Treated as sensitive**: full name, email, phone, date of birth, SSN, full address.
+- **Treated as sensitive**: full name, email, phone, date of birth, SSN, and full address.
 - **Avoiding exposure**:
-  - API response returns only `applicationId`, `reviewTier`, `riskFlags` — no PII.
+  - API response returns only `applicationId`, `reviewTier`, and `riskFlags` — no PII.
   - API keys are server‑only and never echoed back in responses.
-  - Handoff records contain no PII; only `applicantRef` (opaque id) links to the full application.
+  - Handoff records contain no PII; only an `applicantRef` (opaque id) links to the full application.
   - Handoff data uses strict, separate contracts, and a single mapping function builds the handoff record from the stored application.
-  - No logging of request body or stored application content; no PII in `riskFlags` text.
-  - Full application exists only in the in-memory store and is not exposed by any endpoint.
+  - No logging of request bodies or stored application content; no PII appears in `riskFlags`.
+  - Full applications are encrypted using `AES‑256‑GCM` before being written to the in‑memory store. The backend never stores raw PII.
+  - The frontend uses an `SSN mask` so the value is never visibly exposed to people nearby or captured accidentally in screenshots.
+  - A tooltip explains why the SSN is required, reducing confusion and helping applicants understand the purpose of the field.
 
 ## Business rules and handoff
 
