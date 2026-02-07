@@ -1,13 +1,9 @@
 import type { StoredApplication, HandoffRecord } from "../types";
 
-<<<<<<< HEAD
-const sampleApplication = (id: string): StoredApplication => {
-=======
 const TEST_ENCRYPTION_KEY = "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE=";
 process.env.ENCRYPTION_KEY = TEST_ENCRYPTION_KEY;
 
 function sampleApplication(id: string): StoredApplication {
->>>>>>> dev
   return {
     applicationId: id,
     submittedAt: new Date("2025-01-01T00:00:00.000Z").toISOString(),
@@ -28,7 +24,7 @@ function sampleApplication(id: string): StoredApplication {
     amountRequested: 500,
     agreement: true,
   };
-};
+}
 
 const sampleHandoff = (id: string): HandoffRecord => {
   return {
