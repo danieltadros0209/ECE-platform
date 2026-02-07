@@ -28,26 +28,32 @@ const validBody = {
 };
 
 describe("POST /api/applications", () => {
-  const originalEnv = process.env.API_KEY;
+  const originalApiKey = process.env.API_KEY;
+  const originalEncKey = process.env.ENCRYPTION_KEY;
+  const testEncKey = "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE=";
 
   afterEach(() => {
-    process.env.API_KEY = originalEnv;
+    process.env.API_KEY = originalApiKey;
+    process.env.ENCRYPTION_KEY = originalEncKey;
   });
 
   it("returns 401 when X-API-Key header is missing", async () => {
     process.env.API_KEY = "secret";
+    process.env.ENCRYPTION_KEY = testEncKey;
     const res = await POST(buildRequest(validBody, null));
     expect(res.status).toBe(401);
   });
 
   it("returns 401 when X-API-Key is wrong", async () => {
     process.env.API_KEY = "secret";
+    process.env.ENCRYPTION_KEY = testEncKey;
     const res = await POST(buildRequest(validBody, "wrong-key"));
     expect(res.status).toBe(401);
   });
 
   it("returns 201 and applicationId when key is valid", async () => {
     process.env.API_KEY = "secret";
+    process.env.ENCRYPTION_KEY = testEncKey;
     const res = await POST(buildRequest(validBody, "secret"));
     expect(res.status).toBe(201);
     const data = await res.json();

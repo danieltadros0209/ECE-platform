@@ -7,3 +7,25 @@
   content: " *";
   color: var(--bs-danger);
 }
+
+.ssn-input .hidden {
+  color: transparent;
+  caret-color: black;
+}
+
+.ssn-input .shown {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+  background: transparent;
+  border: none;
+  color: black;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

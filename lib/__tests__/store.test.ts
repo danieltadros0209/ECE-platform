@@ -1,5 +1,8 @@
 import type { StoredApplication, HandoffRecord } from "../types";
 
+const TEST_ENCRYPTION_KEY = "AQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQE=";
+process.env.ENCRYPTION_KEY = TEST_ENCRYPTION_KEY;
+
 function sampleApplication(id: string): StoredApplication {
   return {
     applicationId: id,
